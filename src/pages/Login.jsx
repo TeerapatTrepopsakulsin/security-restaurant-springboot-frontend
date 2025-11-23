@@ -26,30 +26,38 @@ export default function Login() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        /><br/>
-        
-        <input
-          type="password"
-          placeholder="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        /><br/>
+    <div className="p-5 max-w-md mx-auto">
+    <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+    <form onSubmit={handleLogin} className="space-y-4">
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        required
+        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
 
-        <button type="submit">Login</button>
-      </form>
+      <button
+        type="submit"
+        className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition duration-200"
+      >
+        Login
+      </button>
+    </form>
 
-      <h2>Google Login</h2>
-        <GoogleLoginButton />
+    <h2 className="text-xl font-semibold mt-10 mb-4 text-center">Google Login</h2>
+    <div className="flex justify-center">
+      <GoogleLoginButton />
     </div>
+  </div>
   );
 }
