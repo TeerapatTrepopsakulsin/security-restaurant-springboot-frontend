@@ -1,16 +1,34 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 
 export default function NewRestaurant() {
   const [name, setName] = useState('')
   const [location, setLocation] = useState('')
-  const [description, setDescription] = useState('')
-  const [imageUrl, setImageUrl] = useState('')
+  const [rating, setRating] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
+  const [_, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    async function init() {
+      try {
+        // 1. Validate user is logged in
+        const me = await api.get('/api/auth/me')
+        setUser(me.data)
+      } catch (error) {
+        console.error(error)
+        navigate('/login') // if not authenticated, go to login
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    init()
+  }, [navigate])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -20,9 +38,8 @@ export default function NewRestaurant() {
     try {
       const payload = {
         name,
-        location,
-        description,
-        imageUrl,
+        rating,
+        location
       }
 
       await api.post('/api/restaurants', payload)
@@ -33,6 +50,10 @@ export default function NewRestaurant() {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  if (loading) {
+    return <div style={{ padding: '2rem' }}>Loading...</div>
   }
 
   return (
@@ -49,6 +70,15 @@ export default function NewRestaurant() {
             style={{ width: '100%', padding: '0.5rem' }}
           />
         </div>
+        
+        <div style={{ marginBottom: '0.75rem' }}>
+          <label style={{ display: 'block', fontWeight: 600 }}>Rating</label>
+          <input
+            value={rating}
+            onChange={(e) => setRating(e.target.value)}
+            style={{ width: '100%', padding: '0.5rem' }}
+          />
+        </div>
 
         <div style={{ marginBottom: '0.75rem' }}>
           <label style={{ display: 'block', fontWeight: 600 }}>Location</label>
@@ -56,25 +86,6 @@ export default function NewRestaurant() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             required
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '0.75rem' }}>
-          <label style={{ display: 'block', fontWeight: 600 }}>Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={4}
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '0.75rem' }}>
-          <label style={{ display: 'block', fontWeight: 600 }}>Image URL</label>
-          <input
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
             style={{ width: '100%', padding: '0.5rem' }}
           />
         </div>
